@@ -148,7 +148,7 @@ local function init()
 	vim.cmd([[hi! UserCoveragerBranchNotTaken guibg=yellow]])
 	vim.cmd([[hi! UserCoverageIfPathNotTaken guibg=black guifg=yellow]])
 
-	vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+	vim.api.nvim_create_autocmd({ "BufEnter" }, {
 		group = group,
 		pattern = "*.ts,*.tsx,*.js,*.jsx",
 		callback = apply_coverage,
