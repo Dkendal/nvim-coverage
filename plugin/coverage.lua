@@ -150,7 +150,7 @@ local function init()
 
 	vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
 		group = group,
-		pattern = "*.ts",
+		pattern = "*.ts,*.tsx,*.js,*.jsx",
 		callback = apply_coverage,
 	})
 end
