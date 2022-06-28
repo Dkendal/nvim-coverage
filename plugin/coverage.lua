@@ -40,7 +40,7 @@ local function to_sign_text(value)
 	return tostring(value)
 end
 
-local function main()
+local function init()
 	local group = vim.api.nvim_create_augroup("UserCoverage", { clear = true })
 	local ns = vim.api.nvim_create_namespace("UserCoverage")
 
@@ -153,6 +153,6 @@ local function main()
 	})
 end
 
-main()
+init()
 
 return M
