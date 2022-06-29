@@ -5,6 +5,13 @@ local mark = vim.api.nvim_buf_set_extmark
 local group = vim.api.nvim_create_augroup("UserCoverage", { clear = true })
 local ns = vim.api.nvim_create_namespace("UserCoverage")
 
+local enabled = true
+
+-- Remove all marks in the buffer.
+function M.clean_up()
+	vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+end
+
 local function find_coverage_file()
 	local path = vim.fn.findfile("coverage/coverage-final.json", ".;")
 
@@ -43,8 +50,13 @@ local function to_sign_text(value)
 	return tostring(value)
 end
 
-local function apply_coverage()
-	vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+-- Apply marks to the buffer from the coverage data.
+function M.apply_coverage()
+	if not enabled then
+		return
+	end
+
+	M.clean_up()
 
 	local buf = vim.api.nvim_get_current_buf()
 	local current_file = vim.api.nvim_buf_get_name(buf)
@@ -142,16 +154,30 @@ local function apply_coverage()
 	end
 end
 
+local function toggle()
+	enabled = not enabled
+
+	if not enabled then
+		vim.notify("Coverage disabled")
+		M.clean_up()
+	else
+		vim.notify("Coverage enabled" )
+		M.apply_coverage()
+	end
+end
+
 local function init()
 	vim.cmd([[hi! link UserCoverageMiss DiffDelete]])
 	vim.cmd([[hi! link UserCoverageHit DiffAdd]])
-	vim.cmd([[hi! UserCoveragerBranchNotTaken guibg=yellow]])
-	vim.cmd([[hi! UserCoverageIfPathNotTaken guibg=black guifg=yellow]])
+	vim.cmd([[hi! link UserCoveragerBranchNotTaken DiffChange]])
+	vim.cmd([[hi! UserCoverageIfPathNotTaken guibg=black guifg=#333300]])
+
+	vim.api.nvim_create_user_command("CoverageToggle", toggle, {})
 
 	vim.api.nvim_create_autocmd({ "BufEnter" }, {
 		group = group,
 		pattern = "*.ts,*.tsx,*.js,*.jsx",
-		callback = apply_coverage,
+		callback = M.apply_coverage,
 	})
 end
 
