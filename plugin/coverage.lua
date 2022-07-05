@@ -86,6 +86,7 @@ function M.apply_coverage()
 		local e = mkloc(fn.decl["end"])
 		if value == 0 then
 			mark(buf, ns, s[1], s[2], {
+				strict = false,
 				end_line = e[1],
 				end_col = e[2],
 				sign_text = " ",
@@ -94,6 +95,7 @@ function M.apply_coverage()
 			})
 		else
 			mark(buf, ns, s[1], s[2], {
+				strict = false,
 				end_line = e[1],
 				end_col = e[2],
 				sign_text = to_sign_text(value),
@@ -109,6 +111,7 @@ function M.apply_coverage()
 		local e = mkloc(statement["end"])
 		if value == 0 then
 			mark(buf, ns, s[1], s[2], {
+				strict = false,
 				end_line = e[1],
 				end_col = e[2],
 				virt_text_pos = "right_align",
@@ -117,6 +120,7 @@ function M.apply_coverage()
 			})
 		else
 			mark(buf, ns, statement.start.line - 1, 0, {
+				strict = false,
 				sign_text = to_sign_text(value),
 				sign_hl_group = "UserCoverageHit",
 			})
@@ -133,18 +137,21 @@ function M.apply_coverage()
 				local e = mkloc(loc["end"])
 				if item.type == "binary-expr" then
 					mark(buf, ns, s[1], s[2], {
+						strict = false,
 						end_line = e[1],
 						end_col = e[2],
 						hl_group = "UserCoveragerBranchNotTaken",
 					})
 				elseif item.type == "if" then
 					mark(buf, ns, s[1], s[2], {
+						strict = false,
 						end_line = e[1],
 						end_col = e[2],
 						hl_group = "UserCoverageMiss",
 					})
 
 					mark(buf, ns, s[1], math.max(0, s[2] - 1), {
+						strict = false,
 						virt_text_pos = "overlay",
 						virt_text = { { "I", "UserCoverageIfPathNotTaken" } },
 					})
@@ -161,7 +168,7 @@ local function toggle()
 		vim.notify("Coverage disabled")
 		M.clean_up()
 	else
-		vim.notify("Coverage enabled" )
+		vim.notify("Coverage enabled")
 		M.apply_coverage()
 	end
 end
